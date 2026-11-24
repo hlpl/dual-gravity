@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dual Solar System & Effective Potential Veff(t) in (1+3) Spacetime</title>
+<style>
+  :root {
+    --bg: #070b14;
+    --panel: #0e1628;
+    --panel-border: #1e2d4d;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent2: #f472b6;
+    --gold: #fbbf24;
+    --green: #34d399;
+    --red: #f87171;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  header {
+    padding: 14px 22px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--panel-border);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  header h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    color: #f8fafc;
+  }
+  header .subtitle {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .badge {
+    background: rgba(56, 189, 248, 0.14);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 14px;
+    padding: 14px;
+    flex: 1;
+  }
+  @media (max-width: 1024px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+  .left-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .canvas-card {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 0 4px;
+  }
+  .card-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #f1f5f9;
+  }
+  .card-eq {
+    font-family: "Cambria Math", "Times New Roman", serif;
+    font-size: 0.85rem;
+    color: var(--accent);
+  }
+  canvas {
+    width: 100%;
+    border-radius: 8px;
+    background: #04070e;
+    display: block;
+  }
+  #simCanvas { height: 470px; }
+  #potCanvas { height: 220px; }
+  .right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .control-box {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .control-box h2 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .btn-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+  button.regime-btn {
+    background: #131f38;
+    border: 1px solid #24365c;
+    color: var(--text);
+    padding: 9px 11px;
+    border-radius: 8px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: all 0.15s;
+  }
+  button.regime-btn:hover { border-color: var(--accent); }
+  button.regime-btn.active {
+    background: rgba(56, 189, 248, 0.18);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  button.regime-btn small {
+    display: block;
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 0.74rem;
+    margin-top: 2px;
+  }
+  .slider-row {
+    margin-bottom: 10px;
+  }
+  .slider-row label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+    color: #cbd5e1;
+  }
+  .slider-row span.val {
+    color: var(--accent);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  button.action-btn {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .btn-launch { background: var(--accent); color: #04101f; }
+  .btn-launch:hover { filter: brightness(1.08); }
+  .btn-reset { background: #1e293b; color: #e2e8f0; border: 1px solid #334155 !important; }
+  .btn-reset:hover { background: #283548; }
+  table.telemetry {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.76rem;
+    font-variant-numeric: tabular-nums;
+  }
+  table.telemetry th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 5px 4px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  table.telemetry td {
+    padding: 6px 4px;
+    border-bottom: 1px solid rgba(30, 45, 77, 0.5);
+  }
+  .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+  .legend-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.74rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .legend-inline span { display: flex; align-items: center; gap: 5px; }
+  .swatch { width: 12px; height: 3px; display: inline-block; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Dual Solar System &amp; Effective Potential V<sub>eff</sub>(t) in (1+3) Spacetime</h1>
+    <div class="subtitle">Metric signature (&minus;, +, &minus;, &minus;) &bull; Radial coordinate = temporal radius t &bull; Angular coordinates = timelike (i&theta;, i&phi;)</div>
+  </div>
+  <div class="badge">r &harr; t Schwarzschild Duality</div>
+</header>
+
+<div class="main-grid">
+  <div class="left-col">
+    <div class="canvas-card">
+      <div class="card-header">
+        <span class="card-title">Dual Manifold Orbital Plane (t, i&phi;)</span>
+        <span class="card-eq" id="eqDisplay">d&sup2;t/dr&sup2; &approx; +5GM/t&sup2; &minus; v<sub>E</sub>&sup2;/t</span>
+      </div>
+      <canvas id="simCanvas"></canvas>
+      <div class="legend-inline">
+        <span><i class="swatch" style="background:#ef4444;"></i>Horizon r<sub>s</sub> = 2GM</span>
+        <span><i class="swatch" style="background:#fbbf24;"></i>Dual Photon Sphere t<sub>ph</sub> = 3GM</span>
+        <span><i class="swatch" style="background:#38bdf8;"></i>Planet-1..4</span>
+        <span><i class="swatch" style="background:#f472b6;"></i>Custom Comet</span>
+      </div>
+    </div>
+
+    <div class="canvas-card">
+      <div class="card-header">
+        <span class="card-title">Live Effective Temporal Potential V<sub>eff</sub>(t)</span>
+        <span class="card-eq" id="potEqDisplay">V<sub>eff</sub>(t) = &minus;f(t)(1 &minus; L&sup2;/t&sup2;)</span>
+      </div>
+      <canvas id="potCanvas"></canvas>
+      <div class="legend-inline">
+        <span><i class="swatch" style="background:#f472b6;"></i>Comet V<sub>eff</sub>(t)</span>
+        <span><i class="swatch" style="background:#38bdf8;"></i>Planet-2 V<sub>eff</sub>(t)</span>
+        <span><i class="swatch" style="background:#fbbf24; height:8px; width:8px; border-radius:50%;"></i>Live Particle State (t, E&sup2;)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-col">
+    <div class="control-box">
+      <h2>1. Dynamical Regime</h2>
+      <div class="btn-group">
+        <button class="regime-btn active" data-mode="wick">
+          Wick-Rotated Orbits (v = i v<sub>E</sub>, &epsilon; = &minus;1)
+          <small>Imaginary temporal velocity balances repulsion: v<sub>E</sub> = &radic;(5GM/t)</small>
+        </button>
+        <button class="regime-btn" data-mode="real">
+          Real Velocity Scattering (v &isin; &#8477;, &epsilon; = &minus;1)
+          <small>Both +5GM/t&sup2; &amp; +v&sup2;/t push outward &rarr; hyperbolic escape</small>
+        </button>
+        <button class="regime-btn" data-mode="strong">
+          Strong-Field Unstable Equilibrium (2GM &lt; t &lt; 3GM)
+          <small>Real L inside Dual photon sphere peak of V<sub>eff</sub>(t)</small>
+        </button>
+        <button class="regime-btn" data-mode="spacelike">
+          Spacelike Dual Regime (&epsilon; = +1)
+          <small>Attractive Dual gravity &minus;GM/t&sup2; + v&sup2;/t (Keplerian analog)</small>
+        </button>
+      </div>
+    </div>
+
+    <div class="control-box">
+      <h2>2. Custom Comet &amp; Potential Controls</h2>
+      <div class="slider-row">
+        <label>Temporal Angular Momentum L <span class="val" id="lVal">4.20 GM</span></label>
+        <input type="range" id="lSlider" min="1.5" max="8.5" step="0.05" value="4.20">
+      </div>
+      <div class="slider-row">
+        <label>Initial Temporal Radius t<sub>0</sub> <span class="val" id="t0Val">7.50 GM</span></label>
+        <input type="range" id="t0Slider" min="2.3" max="14.0" step="0.1" value="7.50">
+      </div>
+      <div class="slider-row">
+        <label>Initial Radial Drift dt/dr <span class="val" id="drVal">-0.12</span></label>
+        <input type="range" id="drSlider" min="-0.60" max="0.60" step="0.02" value="-0.12">
+      </div>
+      <div class="slider-row">
+        <label>Evolution Speed (d&tau; step) <span class="val" id="spdVal">1.0x</span></label>
+        <input type="range" id="spdSlider" min="0.2" max="2.5" step="0.1" value="1.0">
+      </div>
+      <div class="action-row">
+        <button class="action-btn btn-launch" id="launchBtn">Launch Comet</button>
+        <button class="action-btn btn-reset" id="resetBtn">Reset System</button>
+      </div>
+    </div>
+
+    <div class="control-box">
+      <h2>3. Live Telemetry (GM = 1)</h2>
+      <table class="telemetry">
+        <thead>
+          <tr>
+            <th>Body</th>
+            <th>t / GM</th>
+            <th>L</th>
+            <th>d&sup2;t/dr&sup2;</th>
+          </tr>
+        </thead>
+        <tbody id="telemetryBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const GM = 1.0;
+const rs = 2.0 * GM;
+const tPh = 3.0 * GM;
+
+let mode = 'wick';
+let simSpeed = 1.0;
+
+const simCanvas = document.getElementById('simCanvas');
+const simCtx = simCanvas.getContext('2d');
+const potCanvas = document.getElementById('potCanvas');
+const potCtx = potCanvas.getContext('2d');
+
+function resizeCanvases() {
+  const dpr = window.devicePixelRatio || 1;
+  [simCanvas, potCanvas].forEach(c => {
+    const rect = c.getBoundingClientRect();
+    c.width = rect.width * dpr;
+    c.height = rect.height * dpr;
+  });
+}
+window.addEventListener('resize', resizeCanvases);
+resizeCanvases();
+
+let bodies = [];
+let comet = null;
+
+function fMetric(t) {
+  return (rs / t) - 1.0;
+}
+
+// Effective potential V_eff(t) such that (dt/dr)^2 = f(t)^2 * (1 - V_eff(t)/E^2)
+// For epsilon = -1: dt_dot^2 = E^2 + f(t)*(L^2/t^2 - 1) => V_eff = -f(t)*(1 - L^2/t^2) for real L
+// Under Wick rotation L -> i L_E: L^2 -> -L_E^2 => V_eff = -f(t)*(1 + L_E^2/t^2)
+// For epsilon = +1: dt_dot^2 = E^2 + f(t)*(L^2/t^2 + 1) => V_eff = -f(t)*(-1 - L^2/t^2) = f(t)*(1 + L^2/t^2)
+function calcVeff(t, L, currentMode) {
+  if (t <= rs * 1.001) return 0;
+  const f = fMetric(t);
+  if (currentMode === 'wick') {
+    return -f * (1.0 + (L * L) / (t * t));
+  } else if (currentMode === 'real' || currentMode === 'strong') {
+    return -f * (1.0 - (L * L) / (t * t));
+  } else {
+    // spacelike epsilon = +1
+    return -f * (-1.0 - (L * L) / (t * t));
+  }
+}
+
+function calcAccel(t, L, E, currentMode) {
+  if (t <= rs * 1.01) return 0;
+  const f = fMetric(t);
+  const fp = -rs / (t * t);
+  let eps = (currentMode === 'spacelike') ? 1.0 : -1.0;
+  let L2 = (currentMode === 'wick') ? -(L * L) : (L * L);
+
+  // Exact relativistic d^2t / dr^2:
+  // (dt/dr)^2 = f^2 + (L2 / (E^2 * t^2)) * f^3 + (eps / E^2) * f^3
+  // d^2t/dr^2 = 0.5 * d/dt [ (dt/dr)^2 ]
+  const term1 = f * fp * (1.0 + (3.0 * eps / (2.0 * E * E)) * f);
+  const term2 = (L2 / (2.0 * E * E * t * t * t)) * f * f * (3.0 * t * fp - 2.0 * f);
+  return term1 + term2;
+}
+
+function initPlanets() {
+  if (mode === 'strong') {
+    // Strong-field equilibrium shell 2GM < t < 3GM: L^2 = rs * t^2 / (3*rs - 2*t)
+    const radii = [2.25, 2.45, 2.65, 2.82];
+    const colors = ['#38bdf8', '#34d399', '#a78bfa', '#fb923c'];
+    bodies = radii.map((t0, idx) => {
+      const L = Math.sqrt((rs * t0 * t0) / (3.0 * rs - 2.0 * t0));
+      const f = fMetric(t0);
+      const E = Math.sqrt(Math.max(0.05, -f * (1.0 - (L * L) / (t0 * t0))));
+      return {
+        name: `Planet-${idx + 1}`,
+        color: colors[idx],
+        t: t0,
+        phi: idx * 1.4,
+        dtdr: 0.0,
+        L: L,
+        E: E,
+        trail: []
+      };
+    });
+  } else {
+    const radii = [4.5, 6.8, 9.4, 12.2];
+    const colors = ['#38bdf8', '#34d399', '#a78bfa', '#fb923c'];
+    bodies = radii.map((t0, idx) => {
+      let L, E;
+      const f = fMetric(t0);
+      if (mode === 'wick') {
+        // Balance d^2t/dr^2 = 0 at t0:
+        L = Math.sqrt((5.0 * GM * t0));
+        E = 1.02;
+        // Tune L slightly so exact relativistic d2t/dr2 = 0 at t0:
+        const fp = -rs / (t0 * t0);
+        const num = f * fp * (1.0 - (3.0 / (2.0 * E * E)) * f);
+        const den = (1.0 / (2.0 * E * E * t0 * t0 * t0)) * f * f * (3.0 * t0 * fp - 2.0 * f);
+        const L2_req = -num / den;
+        L = Math.sqrt(Math.max(0.1, -L2_req));
+      } else if (mode === 'spacelike') {
+        E = 0.98;
+        const fp = -rs / (t0 * t0);
+        const num = f * fp * (1.0 + (3.0 / (2.0 * E * E)) * f);
+        const den = (1.0 / (2.0 * E * E * t0 * t0 * t0)) * f * f * (3.0 * t0 * fp - 2.0 * f);
+        L = Math.sqrt(Math.max(0.1, -num / den));
+      } else {
+        // Real scattering mode: outward hyperbolic drift
+        L = Math.sqrt(3.5 * GM * t0);
+        E = 1.15;
+      }
+      return {
+        name: `Planet-${idx + 1}`,
+        color: colors[idx],
+        t: t0,
+        phi: idx * 1.55,
+        dtdr: (mode === 'real') ? 0.06 * (idx + 1) : 0.0,
+        L: L,
+        E: E,
+        trail: []
+      };
+    });
+  }
+}
+
+function launchComet() {
+  const L = parseFloat(document.getElementById('lSlider').value);
+  const t0 = parseFloat(document.getElementById('t0Slider').value);
+  const dtdr0 = parseFloat(document.getElementById('drSlider').value);
+
+  const f = fMetric(t0);
+  const Veff0 = calcVeff(t0, L, mode);
+  // (dt/dr)^2 = f^2 * (1 - Veff/E^2) => E^2 = Veff / (1 - (dtdr0/f)^2)
+  const ratio = Math.min(0.85, (dtdr0 / f) * (dtdr0 / f));
+  let E2 = Math.abs(Veff0) / (1.0 - ratio);
+  if (E2 < 0.15) E2 = 1.05;
+
+  comet = {
+    name: 'Comet',
+    color: '#f472b6',
+    t: t0,
+    phi: 0.3,
+    dtdr: dtdr0,
+    L: L,
+    E: Math.sqrt(E2),
+    trail: []
+  };
+}
+
+function resetAll() {
+  initPlanets();
+  launchComet();
+}
+
+// UI Listeners
+document.querySelectorAll('.regime-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.regime-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    mode = btn.dataset.mode;
+
+    const eqDisp = document.getElementById('eqDisplay');
+    const potEqDisp = document.getElementById('potEqDisplay');
+    if (mode === 'wick') {
+      eqDisp.innerHTML = 'd&sup2;t/dr&sup2; &approx; +5GM/t&sup2; &minus; v<sub>E</sub>&sup2;/t (Wick-Rotated)';
+      potEqDisp.innerHTML = 'V<sub>eff</sub>(t) = &minus;f(t)(1 + L<sub>E</sub>&sup2;/t&sup2;)';
+      document.getElementById('t0Slider').value = 7.5;
+      document.getElementById('lSlider').value = 6.1;
+      document.getElementById('drSlider').value = -0.10;
+    } else if (mode === 'real') {
+      eqDisp.innerHTML = 'd&sup2;t/dr&sup2; &approx; +5GM/t&sup2; + v&sup2;/t (Repulsive Scattering)';
+      potEqDisp.innerHTML = 'V<sub>eff</sub>(t) = &minus;f(t)(1 &minus; L&sup2;/t&sup2;)';
+      document.getElementById('t0Slider').value = 6.0;
+      document.getElementById('lSlider').value = 4.5;
+      document.getElementById('drSlider').value = -0.28;
+    } else if (mode === 'strong') {
+      eqDisp.innerHTML = 'L&sup2; = r<sub>s</sub>t&sup2;/(3r<sub>s</sub> &minus; 2t) &isin; (2GM, 3GM)';
+      potEqDisp.innerHTML = 'V<sub>eff</sub>(t) Peak at t<sub>circ</sub> &lt; 3GM (Unstable)';
+      document.getElementById('t0Slider').value = 2.65;
+      document.getElementById('lSlider').value = 4.80;
+      document.getElementById('drSlider').value = 0.00;
+    } else {
+      eqDisp.innerHTML = 'd&sup2;t/dr&sup2; &approx; &minus;GM/t&sup2; + v&sup2;/t (&epsilon; = +1 Dual)';
+      potEqDisp.innerHTML = 'V<sub>eff</sub>(t) = f(t)(1 + L&sup2;/t&sup2;)';
+      document.getElementById('t0Slider').value = 8.0;
+      document.getElementById('lSlider').value = 3.2;
+      document.getElementById('drSlider').value = -0.08;
+    }
+    updateSliderLabels();
+    resetAll();
+  });
+});
+
+function updateSliderLabels() {
+  document.getElementById('lVal').textContent = parseFloat(document.getElementById('lSlider').value).toFixed(2) + ' GM';
+  document.getElementById('t0Val').textContent = parseFloat(document.getElementById('t0Slider').value).toFixed(2) + ' GM';
+  document.getElementById('drVal').textContent = parseFloat(document.getElementById('drSlider').value).toFixed(2);
+  simSpeed = parseFloat(document.getElementById('spdSlider').value);
+  document.getElementById('spdVal').textContent = simSpeed.toFixed(1) + 'x';
+}
+
+['lSlider', 't0Slider', 'drSlider', 'spdSlider'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateSliderLabels);
+});
+document.getElementById('launchBtn').addEventListener('click', launchComet);
+document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+function stepBody(b, dr) {
+  if (!b || b.t <= rs * 1.02 || b.t > 28.0) return;
+  // Velocity Verlet in spatial coordinate r:
+  const a1 = calcAccel(b.t, b.L, b.E, mode);
+  const tNew = b.t + b.dtdr * dr + 0.5 * a1 * dr * dr;
+  if (tNew <= rs * 1.02) {
+    b.t = rs * 1.02;
+    b.dtdr = 0;
+    return;
+  }
+  const a2 = calcAccel(tNew, b.L, b.E, mode);
+  b.dtdr += 0.5 * (a1 + a2) * dr;
+  b.t = tNew;
+
+  // dphi / dr = (dphi/dtau) / (dr/dtau) = (L / t^2) / (-E / f(t)) = -f(t)*L / (E * t^2) > 0 since f(t) < 0
+  const f = fMetric(b.t);
+  const dphidr = (-f * b.L) / (b.E * b.t * b.t);
+  b.phi += dphidr * dr;
+
+  b.trail.push({ t: b.t, phi: b.phi });
+  if (b.trail.length > 260) b.trail.shift();
+}
+
+function drawSim() {
+  const w = simCanvas.width;
+  const h = simCanvas.height;
+  const dpr = window.devicePixelRatio || 1;
+  simCtx.clearRect(0, 0, w, h);
+
+  const cx = w * 0.5;
+  const cy = h * 0.5;
+  const maxR = Math.min(w, h) * 0.46;
+  const scale = maxR / 15.0; // 15 GM fits nicely
+
+  // Subtle polar grid
+  simCtx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
+  simCtx.lineWidth = 1 * dpr;
+  for (let rGrid = 4; rGrid <= 14; rGrid += 2) {
+    simCtx.beginPath();
+    simCtx.arc(cx, cy, rGrid * scale, 0, Math.PI * 2);
+    simCtx.stroke();
+  }
+  for (let ang = 0; ang < Math.PI; ang += Math.PI / 6) {
+    simCtx.beginPath();
+    simCtx.moveTo(cx - maxR * Math.cos(ang), cy - maxR * Math.sin(ang));
+    simCtx.lineTo(cx + maxR * Math.cos(ang), cy + maxR * Math.sin(ang));
+    simCtx.stroke();
+  }
+
+  // Dual Photon Sphere t = 3GM
+  simCtx.save();
+  simCtx.setLineDash([5 * dpr, 5 * dpr]);
+  simCtx.strokeStyle = '#fbbf24';
+  simCtx.lineWidth = 1.5 * dpr;
+  simCtx.beginPath();
+  simCtx.arc(cx, cy, tPh * scale, 0, Math.PI * 2);
+  simCtx.stroke();
+  simCtx.restore();
+
+  // Horizon t = r_s = 2GM
+  const grad = simCtx.createRadialGradient(cx, cy, 0, cx, cy, rs * scale);
+  grad.addColorStop(0, '#000000');
+  grad.addColorStop(0.75, '#1e0911');
+  grad.addColorStop(1, 'rgba(239, 68, 68, 0.45)');
+  simCtx.fillStyle = grad;
+  simCtx.beginPath();
+  simCtx.arc(cx, cy, rs * scale, 0, Math.PI * 2);
+  simCtx.fill();
+
+  simCtx.strokeStyle = '#ef4444';
+  simCtx.lineWidth = 2 * dpr;
+  simCtx.beginPath();
+  simCtx.arc(cx, cy, rs * scale, 0, Math.PI * 2);
+  simCtx.stroke();
+
+  // Axis labels
+  simCtx.fillStyle = '#64748b';
+  simCtx.font = `${11 * dpr}px sans-serif`;
+  simCtx.fillText('Temporal Radius t (radial)', cx + 6 * dpr, cy - maxR + 12 * dpr);
+  simCtx.fillText('Timelike Phase iϕ', cx + maxR - 92 * dpr, cy - 6 * dpr);
+
+  const all = [...bodies, comet].filter(Boolean);
+  all.forEach(b => {
+    // Trail
+    if (b.trail.length > 1) {
+      simCtx.beginPath();
+      b.trail.forEach((pt, idx) => {
+        const px = cx + pt.t * scale * Math.cos(pt.phi);
+        const py = cy + pt.t * scale * Math.sin(pt.phi);
+        if (idx === 0) simCtx.moveTo(px, py);
+        else simCtx.lineTo(px, py);
+      });
+      simCtx.strokeStyle = b.color + '88';
+      simCtx.lineWidth = (b.name === 'Comet' ? 2.2 : 1.6) * dpr;
+      simCtx.stroke();
+    }
+
+    // Body dot
+    const bx = cx + b.t * scale * Math.cos(b.phi);
+    const by = cy + b.t * scale * Math.sin(b.phi);
+    simCtx.fillStyle = b.color;
+    simCtx.beginPath();
+    simCtx.arc(bx, by, (b.name === 'Comet' ? 5.5 : 4.8) * dpr, 0, Math.PI * 2);
+    simCtx.fill();
+
+    simCtx.fillStyle = '#f8fafc';
+    simCtx.font = `600 ${11 * dpr}px sans-serif`;
+    simCtx.fillText(b.name, bx + 8 * dpr, by + 4 * dpr);
+  });
+}
+
+function drawPotential() {
+  const w = potCanvas.width;
+  const h = potCanvas.height;
+  const dpr = window.devicePixelRatio || 1;
+  potCtx.clearRect(0, 0, w, h);
+
+  const padL = 44 * dpr;
+  const padR = 16 * dpr;
+  const padT = 16 * dpr;
+  const padB = 28 * dpr;
+  const plotW = w - padL - padR;
+  const plotH = h - padT - padB;
+
+  const tMin = 2.02;
+  const tMax = (mode === 'strong') ? 5.5 : 14.0;
+
+  const p2 = bodies[1];
+  const samples = 220;
+
+  // Determine vertical scale dynamically from Comet and Planet-2
+  let vMin = Infinity;
+  let vMax = -Infinity;
+  const activeCurves = [];
+  if (comet) activeCurves.push({ body: comet, color: '#f472b6' });
+  if (p2) activeCurves.push({ body: p2, color: '#38bdf8' });
+
+  activeCurves.forEach(c => {
+    for (let i = 0; i <= samples; i++) {
+      const t = tMin + (i / samples) * (tMax - tMin);
+      const v = calcVeff(t, c.body.L, mode);
+      if (isFinite(v) && Math.abs(v) < 25) {
+        if (v < vMin) vMin = v;
+        if (v > vMax) vMax = v;
+      }
+    }
+    const e2 = c.body.E * c.body.E;
+    if (isFinite(e2) && Math.abs(e2) < 25) {
+      if (e2 < vMin) vMin = e2;
+      if (e2 > vMax) vMax = e2;
+    }
+  });
+
+  if (!isFinite(vMin) || !isFinite(vMax) || vMax - vMin < 0.2) {
+    vMin = -1.5;
+    vMax = 2.5;
+  }
+  const margin = (vMax - vMin) * 0.15;
+  vMin -= margin;
+  vMax += margin;
+
+  const toX = t => padL + ((t - tMin) / (tMax - tMin)) * plotW;
+  const toY = v => padT + plotH - ((v - vMin) / (vMax - vMin)) * plotH;
+
+  // Grid & zero line
+  potCtx.strokeStyle = 'rgba(148, 163, 184, 0.15)';
+  potCtx.lineWidth = 1 * dpr;
+  if (vMin < 0 && vMax > 0) {
+    const y0 = toY(0);
+    potCtx.beginPath();
+    potCtx.moveTo(padL, y0);
+    potCtx.lineTo(w - padR, y0);
+    potCtx.stroke();
+  }
+
+  // Photon sphere vertical line t = 3GM
+  if (tPh >= tMin && tPh <= tMax) {
+    const xPh = toX(tPh);
+    potCtx.save();
+    potCtx.setLineDash([4 * dpr, 4 * dpr]);
+    potCtx.strokeStyle = 'rgba(251, 191, 36, 0.55)';
+    potCtx.beginPath();
+    potCtx.moveTo(xPh, padT);
+    potCtx.lineTo(xPh, padT + plotH);
+    potCtx.stroke();
+    potCtx.restore();
+    potCtx.fillStyle = '#fbbf24';
+    potCtx.font = `${10 * dpr}px sans-serif`;
+    potCtx.fillText('t_ph=3GM', xPh + 4 * dpr, padT + 11 * dpr);
+  }
+
+  // Axes
+  potCtx.strokeStyle = '#334155';
+  potCtx.lineWidth = 1.2 * dpr;
+  potCtx.beginPath();
+  potCtx.moveTo(padL, padT);
+  potCtx.lineTo(padL, padT + plotH);
+  potCtx.lineTo(w - padR, padT + plotH);
+  potCtx.stroke();
+
+  // X-axis ticks
+  potCtx.fillStyle = '#94a3b8';
+  potCtx.font = `${10 * dpr}px sans-serif`;
+  const stepT = (mode === 'strong') ? 0.5 : 2.0;
+  for (let tk = Math.ceil(tMin / stepT) * stepT; tk <= tMax; tk += stepT) {
+    const xk = toX(tk);
+    potCtx.fillText(tk.toFixed(1), xk - 8 * dpr, padT + plotH + 16 * dpr);
+  }
+  potCtx.fillText('t / GM', w - padR - 32 * dpr, padT + plotH + 16 * dpr);
+  potCtx.fillText('V_eff(t)', 6 * dpr, padT + 10 * dpr);
+
+  // Draw curves & live markers
+  activeCurves.forEach(c => {
+    potCtx.beginPath();
+    let started = false;
+    for (let i = 0; i <= samples; i++) {
+      const t = tMin + (i / samples) * (tMax - tMin);
+      const v = calcVeff(t, c.body.L, mode);
+      if (v < vMin - 2 || v > vMax + 2) { started = false; continue; }
+      const x = toX(t);
+      const y = toY(v);
+      if (!started) { potCtx.moveTo(x, y); started = true; }
+      else potCtx.lineTo(x, y);
+    }
+    potCtx.strokeStyle = c.color;
+    potCtx.lineWidth = 2 * dpr;
+    potCtx.stroke();
+
+    // Live particle marker on its V_eff(t) curve and E^2 energy level
+    if (c.body.t >= tMin && c.body.t <= tMax) {
+      const curV = calcVeff(c.body.t, c.body.L, mode);
+      const curE2 = c.body.E * c.body.E;
+      const mx = toX(c.body.t);
+      const myV = toY(Math.max(vMin, Math.min(vMax, curV)));
+      const myE = toY(Math.max(vMin, Math.min(vMax, curE2)));
+
+      // Vertical kinetic gap line between V_eff(t) and E^2
+      potCtx.save();
+      potCtx.setLineDash([2 * dpr, 2 * dpr]);
+      potCtx.strokeStyle = '#fbbf24';
+      potCtx.beginPath();
+      potCtx.moveTo(mx, myV);
+      potCtx.lineTo(mx, myE);
+      potCtx.stroke();
+      potCtx.restore();
+
+      // Marker on curve
+      potCtx.fillStyle = c.color;
+      potCtx.beginPath();
+      potCtx.arc(mx, myV, 4.5 * dpr, 0, Math.PI * 2);
+      potCtx.fill();
+
+      // Marker at E^2
+      potCtx.fillStyle = '#fbbf24';
+      potCtx.beginPath();
+      potCtx.arc(mx, myE, 3.5 * dpr, 0, Math.PI * 2);
+      potCtx.fill();
+    }
+  });
+}
+
+function updateTelemetry() {
+  const tbody = document.getElementById('telemetryBody');
+  const all = [...bodies, comet].filter(Boolean);
+  tbody.innerHTML = all.map(b => {
+    const acc = calcAccel(b.t, b.L, b.E, mode);
+    const status = (b.t <= rs * 1.03) ? 'Horizon' : (b.t > 25 ? 'Escaped' : b.t.toFixed(2));
+    return `<tr>
+      <td><span class="dot" style="background:${b.color}"></span>${b.name}</td>
+      <td>${status}</td>
+      <td>${b.L.toFixed(2)}</td>
+      <td>${acc >= 0 ? '+' : ''}${acc.toFixed(4)}</td>
+    </tr>`;
+  }).join('');
+}
+
+let frameCount = 0;
+function loop() {
+  const substeps = 6;
+  const dr = (0.045 * simSpeed) / substeps;
+  for (let s = 0; s < substeps; s++) {
+    bodies.forEach(b => stepBody(b, dr));
+    if (comet) stepBody(comet, dr);
+  }
+  drawSim();
+  drawPotential();
+  if (frameCount % 6 === 0) updateTelemetry();
+  frameCount++;
+  requestAnimationFrame(loop);
+}
+
+updateSliderLabels();
+resetAll();
+loop();
+</script>
+</body>
+</html>
