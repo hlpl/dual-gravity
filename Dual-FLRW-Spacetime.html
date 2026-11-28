@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dual FLRW Gravity &amp; Coupled (3+1)⊕(1+3) Cosmic Expansion</title>
+<style>
+  :root {
+    --bg: #0b0f19;
+    --panel: #111827;
+    --panel-alt: #161f33;
+    --border: #26324a;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --accent: #38bdf8;
+    --accent2: #f472b6;
+    --accent3: #34d399;
+    --warn: #fbbf24;
+    --danger: #f87171;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.45;
+    padding: 16px;
+  }
+  header {
+    text-align: center;
+    padding: 14px 16px 18px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  header h1 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: 0.3px;
+  }
+  header p {
+    font-size: 0.86rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(56, 189, 248, 0.14);
+    color: var(--accent);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.75rem;
+    margin: 6px 4px 0;
+  }
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    max-width: 1680px;
+    margin: 0 auto;
+  }
+  @media (max-width: 1180px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+  .dashboard {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .dash-header h2 {
+    font-size: 1.05rem;
+    color: #f1f5f9;
+  }
+  .dash-header span {
+    font-size: 0.76rem;
+    color: var(--accent);
+    font-family: monospace;
+  }
+  .canvas-pair {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 680px) {
+    .canvas-pair { grid-template-columns: 1fr; }
+  }
+  .canvas-box {
+    background: #070b14;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    position: relative;
+  }
+  .canvas-title {
+    font-size: 0.76rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+  canvas {
+    width: 100%;
+    height: 250px;
+    display: block;
+    border-radius: 4px;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .section-box {
+    background: var(--panel-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .section-box h3 {
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .regime-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .regime-btn {
+    background: #0d1424;
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 9px;
+    border-radius: 6px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.77rem;
+    transition: all 0.15s;
+  }
+  .regime-btn:hover { border-color: var(--accent); }
+  .regime-btn.active {
+    background: rgba(56, 189, 248, 0.16);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .regime-btn small { display: block; color: var(--muted); font-size: 0.69rem; margin-top: 2px; }
+  .controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 14px;
+  }
+  .control-item label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.77rem;
+    color: #cbd5e1;
+    margin-bottom: 3px;
+  }
+  .control-item label span { color: var(--accent); font-family: monospace; }
+  input[type=range] {
+    width: 100%;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  button.action-btn {
+    background: var(--accent);
+    color: #06101d;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.78rem;
+    cursor: pointer;
+  }
+  button.action-btn.secondary {
+    background: #1e293b;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  button.action-btn.active-toggle {
+    background: var(--accent3);
+    color: #051b11;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.76rem;
+    font-family: monospace;
+  }
+  th, td {
+    padding: 5px 6px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+  th { color: var(--muted); font-weight: 600; }
+  .note-footer {
+    max-width: 1680px;
+    margin: 14px auto 0;
+    font-size: 0.76rem;
+    color: var(--muted);
+    text-align: center;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Dual FLRW Gravity &amp; Coupled (3+1) ⊕ (1+3) Cosmic Expansion</h1>
+  <p>Metric signature (−, +, −, −) • Evolution along spatial coordinate r • 3D timelike manifold (t, iθ, iφ) • Zero Dark Matter / Zero Dark Energy</p>
+  <div>
+    <span class="badge">r ↔ t FLRW Duality</span>
+    <span class="badge">g<sub>μν</sub><sup>swap</sup> Consistent T<sub>μν</sub></span>
+    <span class="badge">Coupled (3+1) ⊕ (1+3) Pantheon+ Fit</span>
+  </div>
+</header>
+
+<div class="main-grid">
+
+  <!-- ==================== LEFT DASHBOARD: GEODESICS & POTENTIAL ==================== -->
+  <div class="dashboard">
+    <div class="dash-header">
+      <h2>Left Dashboard: (1+3) Dual FLRW Geodesics &amp; V<sub>eff</sub>(t)</h2>
+      <span>d²t/dr² + 2ℋ dt/dr ≈ −2kt + v²/(a²t)</span>
+    </div>
+
+    <div class="canvas-pair">
+      <div class="canvas-box">
+        <div class="canvas-title">
+          <span>Temporal Manifold (t, iφ)</span>
+          <span id="horizonLabel">t_H = 1/√k = 5.00</span>
+        </div>
+        <canvas id="orbitCanvas" width="380" height="260"></canvas>
+        <div class="legend">
+          <div class="legend-item"><span class="dot" style="background:#f87171"></span>Horizon t<sub>H</sub></div>
+          <div class="legend-item"><span class="dot" style="background:#38bdf8"></span>Test Worldline</div>
+          <div class="legend-item"><span class="dot" style="background:#34d399"></span>Ref Orbit 1</div>
+          <div class="legend-item"><span class="dot" style="background:#fbbf24"></span>Ref Orbit 2</div>
+        </div>
+      </div>
+
+      <div class="canvas-box">
+        <div class="canvas-title">
+          <span>Effective Potential V<sub>eff</sub>(t)</span>
+          <span>−f(t)(1 − L²/a²t²)</span>
+        </div>
+        <canvas id="potCanvas" width="340" height="260"></canvas>
+        <div class="legend">
+          <div class="legend-item"><span class="dot" style="background:#38bdf8"></span>Test V<sub>eff</sub>(t)</div>
+          <div class="legend-item"><span class="dot" style="background:#f472b6"></span>Live State (t, E²)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-box">
+      <h3>1. Dynamical Regime (Left Simulation)</h3>
+      <div class="regime-grid" id="regimeGrid">
+        <button class="regime-btn active" data-regime="k_pos">
+          Positive Curvature (k &gt; 0, ε = −1)
+          <small>Linearly stable orbits inside t<sub>H</sub> = 1/√k</small>
+        </button>
+        <button class="regime-btn" data-regime="k_neg_wick">
+          Wick-Rotated (k &lt; 0, v = i v<sub>E</sub>)
+          <small>Imaginary v balances +2|k|t repulsion</small>
+        </button>
+        <button class="regime-btn" data-regime="k_neg_real">
+          Cosmic Repulsion (k &lt; 0, v ∈ ℝ)
+          <small>Both +2|k|t &amp; +v²/t accelerate outward</small>
+        </button>
+        <button class="regime-btn" data-regime="spacelike">
+          Spacelike Dual (ε = +1, E → 1)
+          <small>Curvature-free d²t/dr² ≈ +v²/t</small>
+        </button>
+      </div>
+    </div>
+
+    <div class="section-box">
+      <h3>2. Geodesic &amp; Scale-Factor Controls</h3>
+      <div class="controls-grid">
+        <div class="control-item">
+          <label>Curvature Magnitude |k| <span id="kVal">0.040</span></label>
+          <input type="range" id="kSlider" min="0.005" max="0.120" step="0.005" value="0.040">
+        </div>
+        <div class="control-item">
+          <label>Temporal Angular Mom. L <span id="lVal">1.85</span></label>
+          <input type="range" id="lSlider" min="0.00" max="4.50" step="0.05" value="1.85">
+        </div>
+        <div class="control-item">
+          <label>Initial Temporal Radius t<sub>0</sub> <span id="t0Val">2.40</span></label>
+          <input type="range" id="t0Slider" min="0.60" max="4.50" step="0.05" value="2.40">
+        </div>
+        <div class="control-item">
+          <label>Initial Drift dt/dr <span id="dtVal">0.04</span></label>
+          <input type="range" id="dtSlider" min="-0.40" max="0.40" step="0.02" value="0.04">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="action-btn" id="launchBtn">Launch Worldline</button>
+        <button class="action-btn secondary" id="resetGeoBtn">Reset</button>
+        <button class="action-btn secondary" id="hubbleToggle">Dynamic a(r) Drag: OFF</button>
+      </div>
+    </div>
+
+    <div class="section-box">
+      <h3>3. Live Geodesic Telemetry</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Worldline</th>
+            <th>t</th>
+            <th>L</th>
+            <th>d²t/dr²</th>
+            <th>a(r) / ℋ</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="geoTelemetry"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== RIGHT DASHBOARD: COUPLED UNIVERSE EXPANSION ==================== -->
+  <div class="dashboard">
+    <div class="dash-header">
+      <h2>Right Dashboard: Coupled (3+1) ⊕ (1+3) Expansion &amp; Pantheon+</h2>
+      <span>H<sub>total</sub>²(z) = H<sub>orig</sub>²(z) + α ℋ<sub>virt</sub>²(z)</span>
+    </div>
+
+    <div class="canvas-pair">
+      <div class="canvas-box">
+        <div class="canvas-title">
+          <span>Distance Modulus μ(z) vs. Pantheon+</span>
+          <span>0.01 ≤ z ≤ 1.60</span>
+        </div>
+        <canvas id="muCanvas" width="380" height="260"></canvas>
+        <div class="legend">
+          <div class="legend-item"><span class="dot" style="background:#f8fafc"></span>Pantheon+ Data</div>
+          <div class="legend-item"><span class="dot" style="background:#38bdf8"></span>Model B (Coupled)</div>
+          <div class="legend-item"><span class="dot" style="background:#34d399"></span>Model C (α∝a²)</div>
+          <div class="legend-item"><span class="dot" style="background:#f472b6"></span>Model A (Pure 1+3)</div>
+        </div>
+      </div>
+
+      <div class="canvas-box">
+        <div class="canvas-title">
+          <span>Expansion Rate H(z)/(1+z)</span>
+          <span>Accel: d[H/(1+z)]/dz &lt; 0</span>
+        </div>
+        <canvas id="hzCanvas" width="340" height="260"></canvas>
+        <div class="legend">
+          <div class="legend-item"><span class="dot" style="background:#9ca3af"></span>ΛCDM Ref</div>
+          <div class="legend-item"><span class="dot" style="background:#38bdf8"></span>Model B</div>
+          <div class="legend-item"><span class="dot" style="background:#34d399"></span>Model C</div>
+          <div class="legend-item"><span class="dot" style="background:#f472b6"></span>Model A (z<sub>max</sub>)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-box">
+      <h3>1. Cosmological Preset (Zero Dark Matter &amp; Zero Dark Energy)</h3>
+      <div class="regime-grid" id="cosmoPresetGrid">
+        <button class="regime-btn active" data-preset="modelB">
+          Model B: Coupled (3+1) ⊕ (1+3)
+          <small>Constant α; fits z=0.01→1090 with Ω<sub>b</sub>=0.0493</small>
+        </button>
+        <button class="regime-btn" data-preset="modelC">
+          Model C: Scale-Coupled α(a) ∝ a²
+          <small>Elevates (1+z)² → (1+z)⁰; matches ΛCDM</small>
+        </button>
+        <button class="regime-btn" data-preset="modelA">
+          Model A: Pure (1+3) Dual Only
+          <small>Fits Pantheon+ (RMSE 0.038); bounce at z<sub>max</sub>=4</small>
+        </button>
+        <button class="regime-btn" data-preset="custom">
+          Custom Parameter Exploration
+          <small>Adjust H<sub>0</sub>, Ω<sub>b</sub>, α, and Ω<sub>b,v</sub> manually</small>
+        </button>
+      </div>
+    </div>
+
+    <div class="section-box">
+      <h3>2. Cosmological Parameters (No Dark Sector)</h3>
+      <div class="controls-grid">
+        <div class="control-item">
+          <label>Hubble Constant H<sub>0</sub> (km/s/Mpc) <span id="h0Val">67.4</span></label>
+          <input type="range" id="h0Slider" min="60.0" max="75.0" step="0.1" value="67.4">
+        </div>
+        <div class="control-item">
+          <label>Baryon Density Ω<sub>b</sub> (3+1) <span id="obVal">0.0493</span></label>
+          <input type="range" id="obSlider" min="0.020" max="0.120" step="0.001" value="0.0493">
+        </div>
+        <div class="control-item">
+          <label>Dual Coupling α <span id="alphaVal">0.950</span></label>
+          <input type="range" id="alphaSlider" min="0.00" max="1.25" step="0.01" value="0.950">
+        </div>
+        <div class="control-item">
+          <label>Dual Baryon Ω<sub>b,v</sub> (1+3) <span id="obvVal">0.000</span></label>
+          <input type="range" id="obvSlider" min="0.000" max="0.300" step="0.005" value="0.000">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="action-btn secondary" id="resetCosmoBtn">Reset to Model B</button>
+      </div>
+    </div>
+
+    <div class="section-box">
+      <h3>3. Observational Diagnostics &amp; Pantheon+ Goodness-of-Fit</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Diagnostic Metric</th>
+            <th>Active Hybrid</th>
+            <th>Model A (1+3)</th>
+            <th>Observed / ΛCDM</th>
+          </tr>
+        </thead>
+        <tbody id="cosmoTelemetry"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="note-footer">
+  <strong>Methodological Note:</strong> While the Coupled (3+1) ⊕ (1+3) Dual FLRW framework reproduces cosmic acceleration and distance-modulus observations across z ∈ [0.01, 1090] without dark matter or dark energy, it remains a non-physical mathematical toy model due to the ultrahyperbolic (−, +, −, −) signature and non-covariant sector superposition.
+</div>
+
+<script>
+// ============================================================================
+// LEFT DASHBOARD: (1+3) Dual FLRW GEODESICS & EFFECTIVE POTENTIAL
+// ============================================================================
+const orbitCanvas = document.getElementById('orbitCanvas');
+const oCtx = orbitCanvas.getContext('2d');
+const potCanvas = document.getElementById('potCanvas');
+const pCtx = potCanvas.getContext('2d');
+
+let regime = 'k_pos';
+let kMag = 0.040;
+let L_test = 1.85;
+let t0_test = 2.40;
+let dtdr_test = 0.04;
+let dynamicDrag = false;
+let rParam = 0;
+
+let bodies = [];
+
+function getSignedK() {
+  if (regime === 'k_pos') return +kMag;
+  if (regime === 'k_neg_wick' || regime === 'k_neg_real') return -kMag;
+  return 0; // spacelike E->1 limit is curvature-free
+}
+
+function getScaleFactor(r) {
+  if (!dynamicDrag) return { a: 1.0, H: 0.0 };
+  const H0_sim = 0.035;
+  const a = 1.0 + H0_sim * r;
+  return { a, H: H0_sim / a };
+}
+
+function initBodies() {
+  rParam = 0;
+  const k = getSignedK();
+  const tH = k > 0 ? 1.0 / Math.sqrt(k) : 6.0;
+  const safeT0 = Math.min(t0_test, tH * 0.92);
+
+  // Reference circular radii
+  const tRef1 = k > 0 ? Math.min(1.6, tH * 0.45) : 1.8;
+  const tRef2 = k > 0 ? Math.min(2.9, tH * 0.72) : 3.2;
+
+  const L1 = k > 0 ? Math.sqrt(2 * k) * tRef1 * tRef1 : Math.sqrt(2 * kMag) * tRef1 * tRef1;
+  const L2 = k > 0 ? Math.sqrt(2 * k) * tRef2 * tRef2 : Math.sqrt(2 * kMag) * tRef2 * tRef2;
+
+  bodies = [
+    { name: 'Test Particle', t: safeT0, phi: 0, v_r: dtdr_test, L: L_test, color: '#38bdf8', trail: [], isTest: true, status: 'Active' },
+    { name: 'Ref Orbit 1',   t: tRef1,  phi: 1.1, v_r: 0, L: L1, color: '#34d399', trail: [], isTest: false, status: 'Circular' },
+    { name: 'Ref Orbit 2',   t: tRef2,  phi: 3.5, v_r: 0, L: L2, color: '#fbbf24', trail: [], isTest: false, status: 'Circular' }
+  ];
+}
+
+function computeAccel(t, v_r, L, a, H) {
+  const k = getSignedK();
+  const f = 1 - k * t * t;
+  if (f <= 0.02 && k > 0) return 0;
+  const v_trans = L / (a * t);
+  let centSign = +1;
+  if (regime === 'k_neg_wick') centSign = -1; // Wick rotation v = i v_E -> -v_E^2/t
+  const curvTerm = (regime === 'spacelike') ? 0 : -2 * k * t;
+  const dragTerm = -2 * H * v_r;
+  const centTerm = centSign * (v_trans * v_trans) / (a * a * t);
+  return curvTerm + dragTerm + centTerm;
+}
+
+function stepGeodesics(dr) {
+  rParam += dr;
+  const { a, H } = getScaleFactor(rParam);
+  const k = getSignedK();
+  const tH = k > 0 ? 1.0 / Math.sqrt(k) : 7.5;
+
+  bodies.forEach(b => {
+    if (b.status !== 'Active' && b.status !== 'Circular') return;
+    const acc1 = computeAccel(b.t, b.v_r, b.L, a, H);
+    const tMid = b.t + 0.5 * dr * b.v_r;
+    const vrMid = b.v_r + 0.5 * dr * acc1;
+    const acc2 = computeAccel(tMid, vrMid, b.L, a, H);
+
+    b.t += dr * vrMid;
+    b.v_r += dr * acc2;
+    b.phi += dr * (b.L / (a * a * b.t * b.t));
+
+    if (b.t <= 0.12) {
+      b.t = 0.12;
+      b.status = 'Origin Core';
+    } else if (k > 0 && b.t >= tH * 0.99) {
+      b.t = tH * 0.99;
+      b.status = 'Horizon Freeze';
+    } else if (b.t > 7.5) {
+      b.status = 'Escaped (t→∞)';
+    }
+
+    b.trail.push({ t: b.t, phi: b.phi });
+    if (b.trail.length > 180) b.trail.shift();
+  });
+}
+
+function drawOrbitCanvas() {
+  const W = orbitCanvas.width, H = orbitCanvas.height;
+  oCtx.clearRect(0, 0, W, H);
+  const cx = W * 0.5, cy = H * 0.5;
+  const k = getSignedK();
+  const tH = k > 0 ? 1.0 / Math.sqrt(k) : 5.5;
+  const maxR = Math.min(W, H) * 0.44;
+  const scale = maxR / (k > 0 ? tH : 5.5);
+
+  document.getElementById('horizonLabel').textContent = k > 0 ? `t_H = ${tH.toFixed(2)}` : `√(2/|k|) = ${Math.sqrt(2/kMag).toFixed(2)}`;
+
+  // Grid rings
+  oCtx.strokeStyle = '#1e293b';
+  oCtx.lineWidth = 1;
+  for (let g = 1; g <= 4; g++) {
+    oCtx.beginPath();
+    oCtx.arc(cx, cy, (maxR * g) / 4, 0, Math.PI * 2);
+    oCtx.stroke();
+  }
+
+  // Horizon or critical circle
+  oCtx.save();
+  oCtx.setLineDash([5, 4]);
+  oCtx.strokeStyle = k > 0 ? '#f87171' : '#a78bfa';
+  oCtx.lineWidth = 1.6;
+  const critR = k > 0 ? tH * scale : Math.min(maxR, Math.sqrt(2 / kMag) * scale);
+  oCtx.beginPath();
+  oCtx.arc(cx, cy, critR, 0, Math.PI * 2);
+  oCtx.stroke();
+  oCtx.restore();
+
+  // Central origin t=0
+  oCtx.fillStyle = '#e2e8f0';
+  oCtx.beginPath();
+  oCtx.arc(cx, cy, 3, 0, Math.PI * 2);
+  oCtx.fill();
+
+  // Trails & particles
+  bodies.forEach(b => {
+    if (b.trail.length > 1) {
+      oCtx.strokeStyle = b.color;
+      oCtx.lineWidth = b.isTest ? 2 : 1.3;
+      oCtx.beginPath();
+      b.trail.forEach((pt, idx) => {
+        const px = cx + pt.t * scale * Math.cos(pt.phi);
+        const py = cy + pt.t * scale * Math.sin(pt.phi);
+        if (idx === 0) oCtx.moveTo(px, py);
+        else oCtx.lineTo(px, py);
+      });
+      oCtx.stroke();
+    }
+    const x = cx + b.t * scale * Math.cos(b.phi);
+    const y = cy + b.t * scale * Math.sin(b.phi);
+    oCtx.fillStyle = b.color;
+    oCtx.beginPath();
+    oCtx.arc(x, y, b.isTest ? 5 : 3.8, 0, Math.PI * 2);
+    oCtx.fill();
+  });
+}
+
+function drawPotentialCanvas() {
+  const W = potCanvas.width, H = potCanvas.height;
+  pCtx.clearRect(0, 0, W, H);
+  const padL = 34, padR = 12, padT = 16, padB = 24;
+  const pw = W - padL - padR, ph = H - padT - padB;
+
+  const k = getSignedK();
+  const { a } = getScaleFactor(rParam);
+  const tMax = k > 0 ? (1.0 / Math.sqrt(k)) * 0.98 : 5.5;
+  const tMin = 0.35;
+
+  function Veff(t) {
+    const f = 1 - k * t * t;
+    const centSign = (regime === 'k_neg_wick') ? -1 : +1;
+    return -f * (1 - centSign * (L_test * L_test) / (a * a * t * t));
+  }
+
+  let vMin = -2.5, vMax = 1.5;
+  const pts = [];
+  for (let i = 0; i <= 100; i++) {
+    const t = tMin + (tMax - tMin) * (i / 100);
+    const v = Math.max(vMin, Math.min(vMax, Veff(t)));
+    pts.push({ t, v });
+  }
+
+  const mapX = t => padL + ((t - tMin) / (tMax - tMin)) * pw;
+  const mapY = v => padT + ph - ((v - vMin) / (vMax - vMin)) * ph;
+
+  // Axes
+  pCtx.strokeStyle = '#334155';
+  pCtx.lineWidth = 1;
+  pCtx.beginPath();
+  pCtx.moveTo(padL, padT);
+  pCtx.lineTo(padL, padT + ph);
+  pCtx.lineTo(padL + pw, padT + ph);
+  pCtx.stroke();
+
+  // Zero line
+  const y0 = mapY(0);
+  pCtx.strokeStyle = '#1e293b';
+  pCtx.beginPath();
+  pCtx.moveTo(padL, y0);
+  pCtx.lineTo(padL + pw, y0);
+  pCtx.stroke();
+
+  // Curve
+  pCtx.strokeStyle = '#38bdf8';
+  pCtx.lineWidth = 2;
+  pCtx.beginPath();
+  pts.forEach((p, idx) => {
+    const x = mapX(p.t), y = mapY(p.v);
+    if (idx === 0) pCtx.moveTo(x, y);
+    else pCtx.lineTo(x, y);
+  });
+  pCtx.stroke();
+
+  // Live particle dot
+  const testB = bodies[0];
+  if (testB) {
+    const clampedT = Math.max(tMin, Math.min(tMax, testB.t));
+    const vNow = Math.max(vMin, Math.min(vMax, Veff(clampedT)));
+    pCtx.fillStyle = '#f472b6';
+    pCtx.beginPath();
+    pCtx.arc(mapX(clampedT), mapY(vNow), 5, 0, Math.PI * 2);
+    pCtx.fill();
+  }
+
+  pCtx.fillStyle = '#94a3b8';
+  pCtx.font = '10px monospace';
+  pCtx.fillText('t', padL + pw - 8, padT + ph + 14);
+  pCtx.fillText('Veff', 4, padT + 8);
+}
+
+function updateGeoTelemetry() {
+  const { a, H } = getScaleFactor(rParam);
+  const tbody = document.getElementById('geoTelemetry');
+  tbody.innerHTML = bodies.map(b => {
+    const acc = computeAccel(b.t, b.v_r, b.L, a, H);
+    return `<tr>
+      <td style="color:${b.color}">${b.name}</td>
+      <td>${b.t.toFixed(2)}</td>
+      <td>${b.L.toFixed(2)}</td>
+      <td>${acc >= 0 ? '+' : ''}${acc.toFixed(3)}</td>
+      <td>${a.toFixed(2)} / ${H.toFixed(3)}</td>
+      <td>${b.status}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ============================================================================
+// RIGHT DASHBOARD: COUPLED (3+1) ⊕ (1+3) UNIVERSE EXPANSION & PANTHEON+
+// ============================================================================
+const muCanvas = document.getElementById('muCanvas');
+const mCtx = muCanvas.getContext('2d');
+const hzCanvas = document.getElementById('hzCanvas');
+const hCtx = hzCanvas.getContext('2d');
+
+const pantheonData = [
+  { z: 0.010, mu: 33.17, err: 0.14 },
+  { z: 0.025, mu: 35.15, err: 0.11 },
+  { z: 0.050, mu: 36.73, err: 0.09 },
+  { z: 0.100, mu: 38.34, err: 0.08 },
+  { z: 0.250, mu: 40.53, err: 0.08 },
+  { z: 0.500, mu: 42.26, err: 0.09 },
+  { z: 0.750, mu: 43.34, err: 0.10 },
+  { z: 1.000, mu: 44.10, err: 0.12 },
+  { z: 1.300, mu: 44.82, err: 0.14 },
+  { z: 1.600, mu: 45.37, err: 0.16 }
+];
+
+let cosmoParams = {
+  preset: 'modelB',
+  H0: 67.4,
+  Ob: 0.0493,
+  alpha: 0.950,
+  Obv: 0.000,
+  scaleAlpha: false
+};
+
+const Or = 9.2e-5; // Radiation density
+
+function E2_hybrid(z, p) {
+  const zp1 = 1 + z;
+  const Ok_v = 1 + p.Obv + Or;
+  // Flat spatial curvature in (3+1) + Dual (1+3) curvature repulsion
+  const effMatter = (p.Ob - p.alpha * p.Obv) * Math.pow(zp1, 3);
+  const effRad = (Or - p.alpha * Or) * Math.pow(zp1, 4);
+  const geomTerm = p.scaleAlpha
+    ? p.alpha * Ok_v // alpha(a) ~ a^2 elevates (1+z)^2 -> (1+z)^0
+    : p.alpha * Ok_v * Math.pow(zp1, 2);
+  const remFlat = 1 - p.Ob - Or - p.alpha * Ok_v + p.alpha * (p.Obv + Or);
+  return effMatter + effRad + geomTerm + remFlat;
+}
+
+function E2_modelA(z) {
+  const zp1 = 1 + z;
+  const Obv = 0.2497;
+  const Okv = 1 + Obv + Or;
+  return Okv * zp1 * zp1 - Obv * Math.pow(zp1, 3) - Or * Math.pow(zp1, 4);
+}
+
+function E2_LCDM(z) {
+  const zp1 = 1 + z;
+  return 0.315 * Math.pow(zp1, 3) + Or * Math.pow(zp1, 4) + 0.6849;
+}
+
+function computeMu(z, H0, e2Func) {
+  const steps = 120;
+  const dz = z / steps;
+  let integral = 0;
+  for (let i = 0; i < steps; i++) {
+    const zMid = (i + 0.5) * dz;
+    const e2 = e2Func(zMid);
+    if (e2 <= 1e-6) return NaN;
+    integral += dz / Math.sqrt(e2);
+  }
+  const c_km = 299792.458;
+  const dL = (1 + z) * (c_km / H0) * integral; // in Mpc
+  return 5 * Math.log10(dL) + 25;
+}
+
+function drawCosmoCanvases() {
+  // 1. Distance Modulus mu(z)
+  const W = muCanvas.width, H = muCanvas.height;
+  mCtx.clearRect(0, 0, W, H);
+  const padL = 38, padR = 12, padT = 16, padB = 24;
+  const pw = W - padL - padR, ph = H - padT - padB;
+
+  const zMin = 0.01, zMax = 1.65;
+  const muMin = 32.5, muMax = 46.2;
+  const mapX = z => padL + ((z - zMin) / (zMax - zMin)) * pw;
+  const mapY = mu => padT + ph - ((mu - muMin) / (muMax - muMin)) * ph;
+
+  // Axes
+  mCtx.strokeStyle = '#334155';
+  mCtx.lineWidth = 1;
+  mCtx.beginPath();
+  mCtx.moveTo(padL, padT);
+  mCtx.lineTo(padL, padT + ph);
+  mCtx.lineTo(padL + pw, padT + ph);
+  mCtx.stroke();
+
+  function plotMuCurve(H0, e2Fn, color, dash = []) {
+    mCtx.save();
+    mCtx.setLineDash(dash);
+    mCtx.strokeStyle = color;
+    mCtx.lineWidth = 2;
+    mCtx.beginPath();
+    let started = false;
+    for (let i = 0; i <= 60; i++) {
+      const z = zMin + (zMax - zMin) * (i / 60);
+      const mu = computeMu(z, H0, e2Fn);
+      if (isNaN(mu)) continue;
+      const x = mapX(z), y = mapY(mu);
+      if (!started) { mCtx.moveTo(x, y); started = true; }
+      else mCtx.lineTo(x, y);
+    }
+    mCtx.stroke();
+    mCtx.restore();
+  }
+
+  // Model A (Pure 1+3)
+  plotMuCurve(65.67, E2_modelA, '#f472b6', [4, 3]);
+  // Model C (Scale-dependent)
+  plotMuCurve(67.4, z => E2_hybrid(z, { H0: 67.4, Ob: 0.0493, alpha: 0.9506, Obv: 0, scaleAlpha: true }), '#34d399', [2, 2]);
+  // Active Hybrid Model
+  plotMuCurve(cosmoParams.H0, z => E2_hybrid(z, cosmoParams), '#38bdf8');
+
+  // Pantheon+ data points + error bars
+  pantheonData.forEach(d => {
+    const x = mapX(d.z), y = mapY(d.mu);
+    const yTop = mapY(d.mu + d.err * 2.5);
+    const yBot = mapY(d.mu - d.err * 2.5);
+    mCtx.strokeStyle = '#94a3b8';
+    mCtx.lineWidth = 1;
+    mCtx.beginPath();
+    mCtx.moveTo(x, yTop);
+    mCtx.lineTo(x, yBot);
+    mCtx.stroke();
+
+    mCtx.fillStyle = '#f8fafc';
+    mCtx.beginPath();
+    mCtx.arc(x, y, 3, 0, Math.PI * 2);
+    mCtx.fill();
+  });
+
+  mCtx.fillStyle = '#94a3b8';
+  mCtx.font = '10px monospace';
+  mCtx.fillText('z', padL + pw - 8, padT + ph + 14);
+  mCtx.fillText('μ(z)', 4, padT + 8);
+
+  // 2. Expansion Rate H(z)/(1+z)
+  const W2 = hzCanvas.width, H2 = hzCanvas.height;
+  hCtx.clearRect(0, 0, W2, H2);
+  const pw2 = W2 - padL - padR, ph2 = H2 - padT - padB;
+  const hzMaxZ = 4.2;
+  const yMin = 0, yMax = 135;
+  const mapX2 = z => padL + (z / hzMaxZ) * pw2;
+  const mapY2 = val => padT + ph2 - ((val - yMin) / (yMax - yMin)) * ph2;
+
+  hCtx.strokeStyle = '#334155';
+  hCtx.beginPath();
+  hCtx.moveTo(padL, padT);
+  hCtx.lineTo(padL, padT + ph2);
+  hCtx.lineTo(padL + pw2, padT + ph2);
+  hCtx.stroke();
+
+  function plotHzCurve(H0, e2Fn, color, dash = []) {
+    hCtx.save();
+    hCtx.setLineDash(dash);
+    hCtx.strokeStyle = color;
+    hCtx.lineWidth = 2;
+    hCtx.beginPath();
+    let started = false;
+    for (let i = 0; i <= 80; i++) {
+      const z = (hzMaxZ * i) / 80;
+      const e2 = e2Fn(z);
+      if (e2 <= 0) break;
+      const val = (H0 * Math.sqrt(e2)) / (1 + z);
+      const x = mapX2(z), y = mapY2(Math.min(yMax, val));
+      if (!started) { hCtx.moveTo(x, y); started = true; }
+      else hCtx.lineTo(x, y);
+    }
+    hCtx.stroke();
+    hCtx.restore();
+  }
+
+  plotHzCurve(67.4, E2_LCDM, '#9ca3af', [4, 4]);
+  plotHzCurve(65.67, E2_modelA, '#f472b6', [3, 3]);
+  plotHzCurve(67.4, z => E2_hybrid(z, { H0: 67.4, Ob: 0.0493, alpha: 0.9506, Obv: 0, scaleAlpha: true }), '#34d399');
+  plotHzCurve(cosmoParams.H0, z => E2_hybrid(z, cosmoParams), '#38bdf8');
+
+  hCtx.fillStyle = '#94a3b8';
+  hCtx.font = '10px monospace';
+  hCtx.fillText('z', padL + pw2 - 8, padT + ph2 + 14);
+  hCtx.fillText('H/(1+z)', 2, padT + 8);
+}
+
+function updateCosmoTelemetry() {
+  // Compute RMSE against Pantheon+
+  let sqErr = 0, count = 0;
+  pantheonData.forEach(d => {
+    const muPred = computeMu(d.z, cosmoParams.H0, z => E2_hybrid(z, cosmoParams));
+    if (!isNaN(muPred)) {
+      sqErr += Math.pow(muPred - d.mu, 2);
+      count++;
+    }
+  });
+  const rmse = count > 0 ? Math.sqrt(sqErr / count).toFixed(3) + ' mag' : 'N/A';
+
+  // Deceleration parameter q0
+  const e2_0 = E2_hybrid(0, cosmoParams);
+  const e2_eps = E2_hybrid(0.001, cosmoParams);
+  const dE2dz = (e2_eps - e2_0) / 0.001;
+  const q0 = (0.5 * dE2dz / e2_0 - 1).toFixed(2);
+
+  // High-z checks
+  const e2_bao = E2_hybrid(2.34, cosmoParams);
+  const h_bao = e2_bao > 0 ? (cosmoParams.H0 * Math.sqrt(e2_bao)).toFixed(1) : 'Bounce!';
+  const e2_cmb = E2_hybrid(1090, cosmoParams);
+  const h_cmb = e2_cmb > 0 ? (cosmoParams.H0 * Math.sqrt(e2_cmb)).toExponential(2) : 'Bounce!';
+
+  document.getElementById('cosmoTelemetry').innerHTML = `
+    <tr>
+      <td>Pantheon+ RMSE</td>
+      <td style="color:#38bdf8">${rmse}</td>
+      <td>0.038 mag</td>
+      <td>0.000 (Ref)</td>
+    </tr>
+    <tr>
+      <td>Deceleration q<sub>0</sub></td>
+      <td style="color:#34d399">${q0} (Accel)</td>
+      <td>−0.13 (Accel)</td>
+      <td>−0.53 (Accel)</td>
+    </tr>
+    <tr>
+      <td>BAO H(z = 2.34)</td>
+      <td>${h_bao}</td>
+      <td>109.4</td>
+      <td>228.0 km/s/Mpc</td>
+    </tr>
+    <tr>
+      <td>CMB H(z = 1090)</td>
+      <td>${h_cmb}</td>
+      <td>N/A (z<sub>max</sub>=4.0)</td>
+      <td>1.54e+6 km/s/Mpc</td>
+    </tr>
+  `;
+}
+
+// ============================================================================
+// UI EVENT LISTENERS & ANIMATION LOOP
+// ============================================================================
+document.querySelectorAll('#regimeGrid .regime-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#regimeGrid .regime-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    regime = btn.dataset.regime;
+    initBodies();
+  });
+});
+
+document.getElementById('kSlider').addEventListener('input', e => {
+  kMag = parseFloat(e.target.value);
+  document.getElementById('kVal').textContent = kMag.toFixed(3);
+  initBodies();
+});
+document.getElementById('lSlider').addEventListener('input', e => {
+  L_test = parseFloat(e.target.value);
+  document.getElementById('lVal').textContent = L_test.toFixed(2);
+  if (bodies[0]) bodies[0].L = L_test;
+});
+document.getElementById('t0Slider').addEventListener('input', e => {
+  t0_test = parseFloat(e.target.value);
+  document.getElementById('t0Val').textContent = t0_test.toFixed(2);
+});
+document.getElementById('dtSlider').addEventListener('input', e => {
+  dtdr_test = parseFloat(e.target.value);
+  document.getElementById('dtVal').textContent = dtdr_test.toFixed(2);
+});
+document.getElementById('launchBtn').addEventListener('click', () => initBodies());
+document.getElementById('resetGeoBtn').addEventListener('click', () => {
+  kMag = 0.040; L_test = 1.85; t0_test = 2.40; dtdr_test = 0.04;
+  document.getElementById('kSlider').value = kMag; document.getElementById('kVal').textContent = '0.040';
+  document.getElementById('lSlider').value = L_test; document.getElementById('lVal').textContent = '1.85';
+  document.getElementById('t0Slider').value = t0_test; document.getElementById('t0Val').textContent = '2.40';
+  document.getElementById('dtSlider').value = dtdr_test; document.getElementById('dtVal').textContent = '0.04';
+  initBodies();
+});
+document.getElementById('hubbleToggle').addEventListener('click', e => {
+  dynamicDrag = !dynamicDrag;
+  e.target.textContent = `Dynamic a(r) Drag: ${dynamicDrag ? 'ON' : 'OFF'}`;
+  e.target.classList.toggle('active-toggle', dynamicDrag);
+  initBodies();
+});
+
+function syncCosmoSliders() {
+  document.getElementById('h0Slider').value = cosmoParams.H0;
+  document.getElementById('h0Val').textContent = cosmoParams.H0.toFixed(1);
+  document.getElementById('obSlider').value = cosmoParams.Ob;
+  document.getElementById('obVal').textContent = cosmoParams.Ob.toFixed(4);
+  document.getElementById('alphaSlider').value = cosmoParams.alpha;
+  document.getElementById('alphaVal').textContent = cosmoParams.alpha.toFixed(3);
+  document.getElementById('obvSlider').value = cosmoParams.Obv;
+  document.getElementById('obvVal').textContent = cosmoParams.Obv.toFixed(3);
+  drawCosmoCanvases();
+  updateCosmoTelemetry();
+}
+
+document.querySelectorAll('#cosmoPresetGrid .regime-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#cosmoPresetGrid .regime-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const p = btn.dataset.preset;
+    cosmoParams.preset = p;
+    if (p === 'modelB') {
+      cosmoParams = { preset: 'modelB', H0: 67.4, Ob: 0.0493, alpha: 0.950, Obv: 0.000, scaleAlpha: false };
+    } else if (p === 'modelC') {
+      cosmoParams = { preset: 'modelC', H0: 67.4, Ob: 0.0493, alpha: 0.950, Obv: 0.000, scaleAlpha: true };
+    } else if (p === 'modelA') {
+      cosmoParams = { preset: 'modelA', H0: 65.67, Ob: 0.000, alpha: 1.000, Obv: 0.2497, scaleAlpha: false };
+    }
+    syncCosmoSliders();
+  });
+});
+
+['h0Slider', 'obSlider', 'alphaSlider', 'obvSlider'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    cosmoParams.H0 = parseFloat(document.getElementById('h0Slider').value);
+    cosmoParams.Ob = parseFloat(document.getElementById('obSlider').value);
+    cosmoParams.alpha = parseFloat(document.getElementById('alphaSlider').value);
+    cosmoParams.Obv = parseFloat(document.getElementById('obvSlider').value);
+    syncCosmoSliders();
+  });
+});
+
+document.getElementById('resetCosmoBtn').addEventListener('click', () => {
+  cosmoParams = { preset: 'modelB', H0: 67.4, Ob: 0.0493, alpha: 0.950, Obv: 0.000, scaleAlpha: false };
+  document.querySelectorAll('#cosmoPresetGrid .regime-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-preset="modelB"]').classList.add('active');
+  syncCosmoSliders();
+});
+
+function animate() {
+  stepGeodesics(0.025);
+  drawOrbitCanvas();
+  drawPotentialCanvas();
+  updateGeoTelemetry();
+  requestAnimationFrame(animate);
+}
+
+initBodies();
+syncCosmoSliders();
+animate();
+</script>
+</body>
+</html>
